@@ -95,6 +95,16 @@ it does exactly that for a single user. But for two, it doesn't.
 
 ### Single value
 
+Say we narrow the query to a single user:
+
+```sql
+SELECT * FROM activities
+WHERE account_id = 1
+  AND creator_id = 1
+ORDER BY id DESC
+LIMIT 200
+```
+
 For `creator_id = 1` the index holds one contiguous run of rows for
 `(account_id, creator_id) = (1, 1)`, already ordered by `id`. Because
 of that, MySQL starts at its high end, reads 200 rows and returns them.
@@ -188,10 +198,9 @@ If the engine won't merge the runs for us, we can at least cap the work
 ourselves. Every row in the global top 200 is also in the top 200 of its own
 run, because a row can't be among the 200 newest overall without being among the
 200 newest for its user. In short, the union of the per-user top 200s already contains
-the whole answer, and that union is at most 400 rows. That's it! We've found a way
-to beat the optimizer, reading a few hundred rows where it scanned two million.
-This is how we'll shape the rewrite. We query each value on its own, each with its
-own limit, then combine the results.
+the whole answer, and that union is at most 400 rows. This is how we'll shape the
+rewrite. We query each value on its own, each with its own limit, then combine the
+results.
 
 ```sql
 SELECT * FROM (
@@ -238,6 +247,15 @@ The plan confirms it:
              (account_id=1, creator_id=2) (reverse)
                (rows=8998) (actual time=3.03..3.14 rows=200)
 ```
+
+To sum it all up, we've got three plans, same result, three very 
+different amounts of work:
+
+| approach | rows read | time |
+|---|---:|---:|
+| default (PK scan) | 2,000,000 | ~375 ms |
+| forced index + sort | 125,000 | ~103 ms |
+| UNION ALL per branch | 400 | ~6.4 ms |
 
 ## Pagination
 
