@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="<%= site.locale %>">
+  <head>
+    <%= render "head", metadata: site.metadata, title: data.title, description: data.description %>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-name" href="/">Filip Sučić</a>
+      <div class="header-right">
+        <button class="theme-toggle" type="button" aria-label="Toggle light and dark theme">◐</button>
+      </div>
+    </header>
+
+    <%= yield %>
+
+    <footer class="site-footer">
+      <% if data.layout == "post" %><a href="/">&larr; Go back</a> &middot; <% end %>
+      Built with <a href="https://www.bridgetownrb.com">Bridgetown</a> &middot;
+      <a href="mailto:sucicf7@gmail.com">sucicf7@gmail.com</a> &middot;
+      <a href="https://github.com/sucicfilip">GitHub</a> &middot;
+      <a href="https://www.linkedin.com/in/sucicfilip/">LinkedIn</a>
+    </footer>
+
+    <script data-goatcounter="https://sucicfilip.goatcounter.com/count"
+            async src="//gc.zgo.at/count.js"></script>
+  </body>
+</html>

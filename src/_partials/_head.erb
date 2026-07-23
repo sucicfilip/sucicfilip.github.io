@@ -1,0 +1,22 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("theme")
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"
+      }
+      document.documentElement.setAttribute("data-theme", t)
+    } catch (e) {}
+  })()
+</script>
+<% t = strip_html(strip_newlines(title.to_s)) %>
+<title><% if t.empty? || t == metadata.title %><%= metadata.title %><% else %><%= t %> | <%= metadata.title %><% end %></title>
+
+<% page_description = (description if defined?(description)) || metadata.description %>
+<meta name="description" content="<%= page_description %>" />
+
+<link rel="stylesheet" href="<%= asset_path :css %>" />
+<script src="<%= asset_path :js %>" defer></script>
+<%= live_reload_dev_js %>

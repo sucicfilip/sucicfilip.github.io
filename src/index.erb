@@ -1,0 +1,23 @@
+---
+layout: default
+title: Filip Sučić
+---
+<img class="portrait" src="/images/filip.jpg" alt="Filip Sučić">
+
+<h1>About</h1>
+
+<p>Backend engineer at <a href="https://productive.io">Productive</a>. I work on the sales side of the application with the CRM team and on app-wide performance optimizations with the Platform team. Ruby on Rails &amp; MySQL.</p>
+
+<p>MSc in Computer Science from <a href="https://www.fer.unizg.hr/">FER</a>, 2026. Occasional contributor to <a href="https://github.com/Shopify/ruby-lsp">ruby-lsp</a>, <a href="https://github.com/Shopify/ruby-lsp-rails">ruby-lsp-rails</a> and <a href="https://github.com/rubocop/rubocop-rspec">rubocop-rspec</a>.</p>
+
+<h2>Writing</h2>
+
+<% posts = collections.posts.resources.sort_by { |p| p.data.date }.reverse %>
+<% if posts.any? %>
+<%= render "post_list", posts: posts.first(3) %>
+<% if posts.size > 3 %>
+<p class="view-all"><a href="/posts/">View all &rarr;</a></p>
+<% end %>
+<% else %>
+<p>Coming soon!</p>
+<% end %>

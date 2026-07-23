@@ -1,0 +1,7 @@
+<dl class="posts">
+  <% posts.each do |post| %>
+    <dt><a href="<%= post.relative_url %>"><%= post.data.title %></a></dt>
+    <dd class="date"><%= post.data.date.strftime("%Y-%m-%d") %></dd>
+    <% if post.data.description %><dd class="desc"><%= post.data.description %></dd><% end %>
+  <% end %>
+</dl>

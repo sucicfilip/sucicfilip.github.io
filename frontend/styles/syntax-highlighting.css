@@ -1,0 +1,26 @@
+/*
+  Rouge syntax highlighting, theme-aware via CSS variables.
+  Token colours come from the --tok-* set defined per theme in index.css.
+*/
+
+pre.highlight,
+.highlight pre {
+  background: var(--code-bg);
+}
+
+.highlight .c, .highlight .cm, .highlight .c1, .highlight .cs { color: var(--tok-comment); font-style: italic; }
+.highlight .cp { color: var(--tok-comment); }
+.highlight .err { color: var(--link-hover); }
+.highlight .k, .highlight .kc, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr { color: var(--tok-keyword); }
+.highlight .kt { color: var(--tok-builtin); }
+.highlight .o, .highlight .ow { color: var(--text); }
+.highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .mo, .highlight .il { color: var(--tok-number); }
+.highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .se, .highlight .sh, .highlight .si, .highlight .sx, .highlight .sr, .highlight .ss { color: var(--tok-string); }
+.highlight .n, .highlight .na, .highlight .nn, .highlight .nx { color: var(--tok-name); }
+.highlight .nb, .highlight .bp { color: var(--tok-builtin); }
+.highlight .nc, .highlight .nf, .highlight .nd { color: var(--tok-builtin); }
+.highlight .no, .highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi { color: var(--tok-number); }
+.highlight .nt { color: var(--tok-keyword); }
+.highlight .gh, .highlight .gu, .highlight .go, .highlight .gp { color: var(--muted); }
+.highlight .gi { color: #7fae9d; }
+.highlight .gd { color: var(--link-hover); }

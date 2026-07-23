@@ -1,0 +1,13 @@
+---
+layout: default
+title: Writing
+permalink: /posts/
+---
+<h1>Writing</h1>
+
+<% posts = collections.posts.resources.sort_by { |p| p.data.date }.reverse %>
+<% if posts.any? %>
+<%= render "post_list", posts: posts %>
+<% else %>
+<p>Coming soon!</p>
+<% end %>

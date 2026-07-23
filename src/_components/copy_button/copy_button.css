@@ -1,0 +1,26 @@
+div.highlight { position: relative; }
+
+.copy-btn {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  font-family: inherit;
+  font-size: 0.72em;
+  color: var(--muted);
+  background: var(--inline-bg);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.15em 0.55em;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+div.highlight:hover .copy-btn,
+.copy-btn:focus-visible { opacity: 1; }
+
+.copy-btn:hover { color: var(--link); border-color: var(--link); }
+
+@media (hover: none) {
+  .copy-btn { opacity: 1; }
+}
