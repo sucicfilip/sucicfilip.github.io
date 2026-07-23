@@ -7,17 +7,16 @@ permalink: /posts/mysql-cant-merge-sorted-index-ranges/
 published: true
 ---
 
-Filtering an indexed column against a value is usually pretty fast. If you add
-the right `ORDER BY` clause, it'll be lightning quick. If you add a second value,
-the query might get multiple orders of magnitude slower. 
+A filter on an indexed column, an `ORDER BY`, and a small `LIMIT` is about as
+common as queries get. With a single value in the filter it's fast. MySQL walks
+the index and stops as soon as it has enough rows. Add a second value to the
+filter and the same query can get orders of magnitude slower, scanning the whole
+table to return 200 rows.
 
-That's exactly what recently happened to me. I didn't fully understand what was
-happening until I analyzed the output of the `EXPLAIN ANALYZE`. Ultimately, I 
-constructed a query that was basically as fast as the one-value case. It turned 
-out the fix is well known in the MySQL performance community. Peter Zaitsev describes
-it [here](https://www.percona.com/blog/possible-optimization-for-sort_merge-and-union-order-by-limit/).
-Anyway, I wanted to share the fix step by step, the way I derived it, not just lay
-it out like "here's the problem, and here's the solution".
+That's what happened to me recently. The `EXPLAIN ANALYZE` output is what finally
+made it click. Once it did, the rewrite it pointed to was almost obvious. I want
+to walk through it one plan at a time, the way I got there, instead of dropping
+the final query on you up front.
 
 ## The setup
 
@@ -195,7 +194,9 @@ than sorting all 125,000 matching rows.
 ## The fix
 
 If the engine won't merge the runs for us, we can at least cap the work
-ourselves. Every row in the global top 200 is also in the top 200 of its own
+ourselves. This trick is well known in the MySQL performance world, Peter Zaitsev
+describes it [here](https://www.percona.com/blog/possible-optimization-for-sort_merge-and-union-order-by-limit/).
+Every row in the global top 200 is also in the top 200 of its own
 run, because a row can't be among the 200 newest overall without being among the
 200 newest for its user. In short, the union of the per-user top 200s already contains
 the whole answer, and that union is at most 400 rows. This is how we'll shape the
