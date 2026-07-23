@@ -22,7 +22,7 @@ the final query on you up front.
 
 I'll demonstrate the problem and the fix using an `activities` table, an append-only
 log. Each row records which tenant it belongs to (`account_id`) and which user produced
-it (`creator_id`).
+it (`creator_id`). Every plan below comes from MySQL 8.4.
 
 ```sql
 CREATE TABLE activities (
@@ -148,7 +148,7 @@ walks the primary key backward and filters as it goes:
          (rows=3075) (actual time=0.05..313 rows=2000000)
 ```
 
-MySQL scanned two million rows (the whole table!) to return two hundred. 
+MySQL scanned two million rows (almost the whole table!) to return two hundred. 
 It expected almost none, that `rows=3075` estimate assumed the two users' 
 rows were spread evenly, but I buried them on purpose to make the case 
 realistic. A tenant's rows are almost always spread across the `id` range,
@@ -272,7 +272,7 @@ because the cursor decides where to resume.
 
 ## The Postgres equivalent
 
-If we hand Postgres the same UNION ALL rewrite, its planner reaches for an operator
+If we hand Postgres 14 the same UNION ALL rewrite, its planner reaches for an operator
 MySQL doesn't have, *Merge Append*:
 
 ```
@@ -289,8 +289,10 @@ Execution Time: 1.228 ms
 ```
 
 Merge Append is a true streaming merge. We can see that in the counts: 192 rows from
-one branch, 9 from the other, 201 in total, not 400. It's the theoretical optimum
-MySQL couldn't quite reach. It pulled from each run only as far as the merge needed.
+one branch, 9 from the other, 201 in total, not 400. That's basically the optimum we
+described. It pulled from each run only as far as the merge needed, one row past the
+200 it returned so it could tell which run the next-largest `id` came from. MySQL
+never gets anywhere near this.
 
 ## Takeaway
 
